@@ -4,14 +4,23 @@ data segment
 	string dw 0
 	number dw 0
 	realnumber dw 0
-	string1 db 'please input the first number','$'
-	string2 db 'please input the second number','$'
-	string3 db '+,-,*,/ which one?$'
-	string4 db 'because ','$'
+	string1 db 'please input the first number: ','$'
+	string2 db 'please input the second number: ','$'
+	string3 db '1=+  2=- 3=* 4=/ 5=exit input your number!$'
+	string4 db 'Description: A caculator Made by 1811386ljh.','$'
+	string41 db 'Function: addition subtraction multiplication(within 10^33-1)','$'
+	string42 db '          division(within 2^16-1,quotient will be rounded up)','$'
+	string43 db '          save function(save the lastest answer)','$'
+	string5 db 'wrong!number2 cannot be 0','$'
+	string6 db 'save this answer as number1?(only positive number)(y/n)','$'
 	number1 db 34 dup('$')
 	number2 db 34 dup('$')
+	ten dw 1,10,100,1000,10000
 	i db 0
 	j db 0
+	bcs dw 0
+	css dw 0
+	sa db 0
 	realnumber1 db 33 dup(0)
 	realnumber2 db 33 dup(0)
 	answer db 34 dup(0)
@@ -21,20 +30,33 @@ code segment
 
 start:mov ax,data
 	mov ds,ax
-
+	lea dx,string4
+	call zfc
+	lea dx,string41
+	call zfc
+	lea dx,string42
+	call zfc
+	lea dx,string43
+	call zfc
+	call kg
+ok:	cmp sa,1
+	je sr2
 	mov string,offset string1
 	mov number,offset number1
 	mov realnumber,offset realnumber1
 	call gets
+sr2:mov sa,0
 	mov string,offset string2
 	mov number,offset number2
 	mov realnumber,offset realnumber2
 	call gets
 	call panduan
+	cmp bl,53
+	je over
 	call puts
-	call cls
+	call save
 
-	jmp start
+	jmp ok
 
 over:	mov ax,4C00h
     	int 21h ;	end
@@ -111,13 +133,56 @@ x2:mov ah,ds:[si]
 	ret
 
 chufa:
+	mov word ptr bcs,0
+	mov word ptr css,0
 	lea bx,realnumber1
-	mov cx,16
-	mov ax,10
-	mov dx,0
-d16:
+	lea si,ten
+	mov cx,5
+c11:mov al,ds:[bx]
+	mov ah,0
+	mul word ptr ds:[si]
+	add bcs,ax
+	inc bx
+	inc si
+	inc si
+	loop c11
 	
-	ret
+	lea bx,realnumber2
+	lea si,ten
+	mov cx,5
+c22:mov al,ds:[bx]
+	mul word ptr ds:[si]
+	add css,ax
+	inc bx
+	inc si
+	inc si
+	loop c22
+	
+	mov ax,bcs
+	mov bx,css
+	cmp bx,0
+	je oo
+	mov dx,0
+	div bx
+	
+	mov cx,5
+	lea bx,ten
+	add bx,8
+	lea si,answer
+	add si,4
+zy:	mov dx,0
+	div word ptr ds:[bx]
+	mov ds:[si],al
+	dec si
+	sub bx,2
+	mov ax,dx
+	loop zy
+	jmp ro
+ 
+
+oo:	lea dx,string5
+	call zfc;
+ro:	ret
 
 puts:mov cx,32
 	lea bx,answer
@@ -138,16 +203,13 @@ out1:	mov dl,ds:[bx+si]
 	int 21h
 	ret
 
-cls:	mov cx,34
+cls:mov cx,34
 	lea si,number1
 	lea di,number2
-	lea bx,answer
 c1:	mov byte ptr ds:[si],'$'
 	mov byte ptr ds:[di],'$'
-	mov byte ptr ds:[bx],0
 	inc si
 	inc di
-	inc bx
 	loop c1
 	mov cx,33
 	lea si,realnumber1
@@ -157,6 +219,13 @@ c2:	mov byte ptr ds:[si],0
 	inc si
 	inc di
 	loop c2
+	ret
+
+cla:mov cx,34
+	lea bx,answer
+cc:	mov byte ptr ds:[bx],0
+	inc bx
+	loop cc
 	ret
 
 jinwei:	mov cx,33
@@ -207,6 +276,12 @@ fz:	mov al,ds:[si];   数字的位数为cx,偏移量为第一个数字最高位,1+cx为第cx个数字最
 	
 zfc:mov ah,09h
 	int 21h
+	call kg
+	ret
+
+kg:	mov ah,02h
+ 	mov dl,0ah
+	int 21h
 	ret
 
 panduan:mov dx,offset string3
@@ -214,9 +289,6 @@ panduan:mov dx,offset string3
 	mov ah,0    ;进行输入
    	int 16h
    	mov bl,al
-   	mov ah,02h
- 	mov dl,0ah
-	int 21h
    	cmp bl,49
 	jne pl
 	call jiafa
@@ -236,5 +308,27 @@ cf:	cmp bl,52
 qt:
 o1:
 	ret
+	
+save:
+	call cls
+	lea dx,string6
+	call zfc
+	mov ah,0    ;进行输入
+   	int 16h
+   	cmp al,121
+   	jne ole
+   	mov sa,1
+   	mov cx,33
+   	lea si,answer
+   	lea di,realnumber1
+fzz:mov al,byte ptr ds:[si]
+	mov byte ptr ds:[di],al
+	inc si
+	inc di
+	loop fzz
+ole:call cla
+	ret
+
 code ends
 end start
+
