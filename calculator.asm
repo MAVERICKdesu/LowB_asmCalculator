@@ -7,7 +7,7 @@ data segment
 	string1 db 'please input the first number: ','$'
 	string2 db 'please input the second number: ','$'
 	string3 db '1=+  2=- 3=* 4=/ 5=exit input your number!$'
-	string4 db 'Description: A caculator Made by 1811386ljh.','$'
+	string4 db 'Description: A caculator Made by MaverickDesu.','$'
 	string41 db 'Function: addition subtraction multiplication(within 10^33-1)','$'
 	string42 db '          division(within 2^16-1,quotient will be rounded up)','$'
 	string43 db '          save function(save the lastest answer)','$'
@@ -28,7 +28,7 @@ data ends
 
 code segment
 
-start:mov ax,data
+start:	mov ax,data
 	mov ds,ax
 	lea dx,string4
 	call zfc
@@ -45,7 +45,7 @@ ok:	cmp sa,1
 	mov number,offset number1
 	mov realnumber,offset realnumber1
 	call gets
-sr2:mov sa,0
+sr2:	mov sa,0
 	mov string,offset string2
 	mov number,offset number2
 	mov realnumber,offset realnumber2
@@ -105,13 +105,13 @@ jian9:	mov al,ds:[bx]
 o:
 	ret
 	
-mull:lea bx,answer
+mull:	lea bx,answer
 	lea si,realnumber1
 	mov byte ptr i,0
-x1:push bx
+x1:	push bx
 	lea di,realnumber2
 	mov byte ptr j,0
-x2:mov ah,ds:[si]
+x2:	mov ah,ds:[si]
 	mov al,ds:[di]
 	mul ah
 	mov dl,10
@@ -138,7 +138,7 @@ chufa:
 	lea bx,realnumber1
 	lea si,ten
 	mov cx,5
-c11:mov al,ds:[bx]
+c11:	mov al,ds:[bx]
 	mov ah,0
 	mul word ptr ds:[si]
 	add bcs,ax
@@ -184,7 +184,7 @@ oo:	lea dx,string5
 	call zfc;
 ro:	ret
 
-puts:mov cx,32
+puts:	mov cx,32
 	lea bx,answer
 	mov si,31
 zero:	cmp byte ptr ds:[bx+si],0
@@ -203,7 +203,7 @@ out1:	mov dl,ds:[bx+si]
 	int 21h
 	ret
 
-cls:mov cx,34
+cls:	mov cx,34
 	lea si,number1
 	lea di,number2
 c1:	mov byte ptr ds:[si],'$'
@@ -221,7 +221,7 @@ c2:	mov byte ptr ds:[si],0
 	loop c2
 	ret
 
-cla:mov cx,34
+cla:	mov cx,34
 	lea bx,answer
 cc:	mov byte ptr ds:[bx],0
 	inc bx
@@ -241,11 +241,11 @@ nn:	mov al,ds:[bx]
 	ret
 
 
-gets:mov dx,string
-	call zfc;       Êä³ö×Ö·û´®
+gets:	mov dx,string
+	call zfc;       è¾“å‡ºå­—ç¬¦ä¸²
 	mov dx,number
 	mov ah, 10
-	int 21h;	ÊäÈëÊı×Ö
+	int 21h;	è¾“å…¥æ•°å­—
  	mov ah,02h
  	mov dl,0ah
 	int 21h
@@ -258,7 +258,7 @@ xh:	mov al,ds:[bx];
 	jb next
 	cmp al,57
 	ja next
-	inc cx;	¼ÇÂ¼Î»Êı
+	inc cx;	è®°å½•ä½æ•°
 	inc bx
 	jmp xh
 next:	
@@ -266,7 +266,7 @@ next:
 	add si,cx
 	inc si
 	mov di,realnumber
-fz:	mov al,ds:[si];   Êı×ÖµÄÎ»ÊıÎªcx,Æ«ÒÆÁ¿ÎªµÚÒ»¸öÊı×Ö×î¸ßÎ»,1+cxÎªµÚcx¸öÊı×Ö×îµÍÎ» Òª½«ÆäËùÓĞÊı×Ö¸´ÖÆµ½realnumber£¬´ÓµÍÎ»µ½¸ßÎ»¸³Öµ      offset number+(1+cx) ¸³¸øoffser realnumber+ax
+fz:	mov al,ds:[si];   æ•°å­—çš„ä½æ•°ä¸ºcx,åç§»é‡ä¸ºç¬¬ä¸€ä¸ªæ•°å­—æœ€é«˜ä½,1+cxä¸ºç¬¬cxä¸ªæ•°å­—æœ€ä½ä½ è¦å°†å…¶æ‰€æœ‰æ•°å­—å¤åˆ¶åˆ°realnumberï¼Œä»ä½ä½åˆ°é«˜ä½èµ‹å€¼      offset number+(1+cx) èµ‹ç»™offser realnumber+ax
 	sub al,48
 	mov ds:[di],al
 	dec si
@@ -274,7 +274,7 @@ fz:	mov al,ds:[si];   Êı×ÖµÄÎ»ÊıÎªcx,Æ«ÒÆÁ¿ÎªµÚÒ»¸öÊı×Ö×î¸ßÎ»,1+cxÎªµÚcx¸öÊı×Ö×î
 	loop fz
 	ret
 	
-zfc:mov ah,09h
+zfc:	mov ah,09h
 	int 21h
 	call kg
 	ret
@@ -285,8 +285,8 @@ kg:	mov ah,02h
 	ret
 
 panduan:mov dx,offset string3
-	call zfc ; Êä³ö×Ö·û´®3
-	mov ah,0    ;½øĞĞÊäÈë
+	call zfc ; è¾“å‡ºå­—ç¬¦ä¸²3
+	mov ah,0    ;è¿›è¡Œè¾“å…¥
    	int 16h
    	mov bl,al
    	cmp bl,49
@@ -313,7 +313,7 @@ save:
 	call cls
 	lea dx,string6
 	call zfc
-	mov ah,0    ;½øĞĞÊäÈë
+	mov ah,0    ;è¿›è¡Œè¾“å…¥
    	int 16h
    	cmp al,121
    	jne ole
@@ -321,7 +321,7 @@ save:
    	mov cx,33
    	lea si,answer
    	lea di,realnumber1
-fzz:mov al,byte ptr ds:[si]
+fzz:	mov al,byte ptr ds:[si]
 	mov byte ptr ds:[di],al
 	inc si
 	inc di
@@ -331,4 +331,3 @@ ole:call cla
 
 code ends
 end start
-
